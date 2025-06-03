@@ -15,7 +15,7 @@
  along with LoggerOuter. If not, see <https://www.gnu.org/licenses/>.
  */
 
-public const string APP_NAME  = "eu.bato24.gegoxaren.loggeroutr";
+public const string APP_NAME  = "eu.bato24.gegoxaren.loggerouter";
 public const int APP_VERSION_MAJOR = 0;
 public const int APP_VERSION_MINOR = 0;
 public static string get_app_version () {
