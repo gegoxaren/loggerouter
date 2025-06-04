@@ -25,6 +25,16 @@ public struct LO.Settings {
   private static GLib.Once<LO.Settings?> instance;
 
   public bool? dark_theme;
+  
+  //TODO: Timer countdown setting.
+
+  string to_string () {
+    var builder = new StringBuilder ();
+    builder.append_printf ("key_file: %px\n", key_file);
+    builder.append_printf ("config_path: %s", config_path);
+    builder.append_printf ("dark_theme: %s", dark_theme.to_string ());
+    return builder.str;
+  }
 
   public static unowned LO.Settings? get_instance () {
     return instance.once (() => {
@@ -35,35 +45,49 @@ public struct LO.Settings {
   private Settings () {}
 
   public void load_settings (string config_path) {
+    print ("path\n");
     key_file = new GLib.KeyFile ();
-  this.config_path = config_path;
+    this.config_path = config_path;
     parse_key_file ();
   }
 
   public void load_setting_from_xdg () {
+    print ("xdg\n");
     key_file = new GLib.KeyFile ();
     this.config_path = LO_XDG_CONFIG_PATH;
+    if (GLib.File.new_for_path (this.config_path).query_exists ()) {
+      parse_key_file ();
+    } else {
+      stderr.printf ("Colud not find file: %s", this.config_path);
+      this.dark_theme = false;
+    }
   }
 
   private void parse_key_file ()
   requires (key_file != null) {
+    print ("Hello!\n");
     try {
       key_file.load_from_file (this.config_path, GLib.KeyFileFlags.NONE);
     } catch (GLib.FileError e) {
       string message = @"ERROR: $(e.message)\n";
       stderr.printf (message);
+      GLib.Process.exit (41);
     } catch (GLib.KeyFileError e) {
       string message = @"ERROR: $(e.message)\n";
       stderr.printf (message);
+      GLib.Process.exit (42);
     }
 
     try {
       if( key_file.has_key (CONFIG_INI_NAMESPACE_MAIN, "DarkTheme") ) {
         this.dark_theme = key_file.get_boolean (CONFIG_INI_NAMESPACE_MAIN, "DarkTheme");
+      } else {
+        this.dark_theme = true;
       }
     } catch (GLib.KeyFileError e) {
       string message = @"ERROR: $(e.message)\n";
       stderr.printf (message);
+      GLib.Process.exit (43);
     }
   }
 }

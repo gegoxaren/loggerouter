@@ -27,7 +27,7 @@ public static string? LO_XDG_CONFIG_DIR;
 public static string? LO_XDG_CONFIG_PATH;
 
 
-public static LO.App app;
+public static LO.Application app;
 
 LO.Options opts;
 LO.Settings settings;
@@ -41,8 +41,8 @@ int main (string[] args) {
   opts = LO.Options.get_instance (); // Prevents segfault
   settings = LO.Settings.get_instance ();
   opts.exec_name = args[0];
-  app = new  LO.App ();
-
+  app = new  LO.Application ();
+  Gtk.init ();
   return app.run (args);
 }
 

@@ -31,7 +31,31 @@ namespace LO {
   }
 
   public static string str_escape_enviorment_variables (string str ) {
-    return str;
+    StringBuilder builder = new StringBuilder ();
+    var enviorment = GLib.Environ.@get ();
+
+    if (str_starts_with (str, "/")) {
+      builder.append_c ('/');
+    }
+
+    var tokens = str.split ("/");
+    builder.append (tokens[0]);
+
+    for (size_t i = 1; i <= tokens.length; i++) {
+      var t = tokens[i];
+
+      if (str_starts_with (str, "$")) {
+        builder.append (GLib.Environ.get_variable (enviorment, t));
+      } else {
+        builder.append (t);
+      }
+    }
+
+    if (str_ends_with (str, "/")) {
+      builder.append_c ('/');
+    }
+
+    return builder.str;
   }
 
 
@@ -96,6 +120,20 @@ namespace LO {
       if (stack[i] != needle[i]) {
         return false;
       }
+    }
+    return true;
+  }
+
+  bool str_ends_with (string stack, string needle) {
+    if (stack.length < needle.length) {
+      return false;
+    }
+    long stack_len = stack.length;
+    for (long i = needle.length; i > 0; i--) {
+      if (stack[i] != needle[stack_len]) {
+        return false;
+      }
+      stack_len--;
     }
     return true;
   }

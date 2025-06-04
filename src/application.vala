@@ -16,7 +16,7 @@
  along with LoggerOuter. If not, see <https://www.gnu.org/licenses/>.
  */
 
-public class LO.App : Gtk.Application {
+public class LO.Application : Gtk.Application {
 
   LO.Action actions;
   LO.Settings settings = LO.Settings.get_instance ();
@@ -82,6 +82,9 @@ public class LO.App : Gtk.Application {
     return -1; // Let the base class handle the rest.
   }
 
+  public Application () {
+
+  }
 
   public override void activate () {
 
@@ -122,19 +125,15 @@ public class LO.App : Gtk.Application {
       row.child.activate ();
     });
 
-    if (opts.config_path != null) {
-      settings.load_settings (opts.config_path);
-    } else {
-      settings.load_setting_from_xdg ();
-    }
-
-    Gtk.Settings.get_default ().gtk_application_prefer_dark_theme = settings.dark_theme;
 
     add_buttons (actions.get_entries ());
 
     window.set_child (list_box);
     window.present ();
     window.set_focus (list_box.get_selected_row  ());
+
+    bool dark_theme = settings.dark_theme;
+    Gtk.Settings.get_default ().gtk_application_prefer_dark_theme = dark_theme;
 
   }
 
