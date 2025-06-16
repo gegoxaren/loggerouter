@@ -47,7 +47,7 @@ public struct LO.Action {
   // Standard way of loadin settings file
   public Action.from_xdg () {
     actions_key_file = new KeyFile ();
-
+    // TODO: Fail gracefully if file does not exist.
     try {
       actions_key_file.load_from_file (LO_XDG_ACTIONS_PATH, GLib.KeyFileFlags.NONE);
     } catch (GLib.FileError e) {
@@ -55,14 +55,14 @@ public struct LO.Action {
                        "Have you created one? See \"--help\" for more information.\n" +
                        @"Error: $(e.message)\n";
       GLib.stderr.printf (message);
-      LO.prensent_dialog (message);
+      LO.present_dialog (message);
       GLib.Process.exit (33);
     } catch (GLib.KeyFileError e) {
       string message = "ERROR: Could not load configuration file.\n" +
                        " ini file error.\n" +
                        @"Error: $(e.message)\n";
       GLib.stderr.printf (message);
-      LO.prensent_dialog (message);
+      LO.present_dialog (message);
       GLib.Process.exit (34);
     }
 
@@ -82,14 +82,14 @@ public struct LO.Action {
       string message = @"ERROR: Could not open file \"$(actions_file)\":\n" +
         @"$(e.message)\n";
       GLib.stderr.printf (message);
-      prensent_dialog (message);
+      LO.present_dialog (message);
       GLib.Process.exit (37);
     } catch (GLib.KeyFileError e) {
       string message =
         @"ERROR: Something went wrong whilst loading the key-file \"$(actions_file)\":\n" +
         @"$(e.message)\n";
       GLib.stderr.printf (message);
-      prensent_dialog (message);
+      LO.present_dialog (message);
       GLib.Process.exit (38);
     }
 
@@ -116,7 +116,7 @@ public struct LO.Action {
       string message = @"ERROR: The keyfile $(this.actions_file) is empty.\n" +
                         "Please add actions to the keyfile (ini-file).\n";
       GLib.stderr.printf (message);
-      LO.prensent_dialog (message);
+      LO.present_dialog (message);
       GLib.Process.exit (35);
     }
 
@@ -149,8 +149,8 @@ public struct LO.Action {
         entries.add (entry);
       } catch (GLib.KeyFileError e) {
         string message = "ERROR: An error has occurred whilst parsing the key-file:\n" +
-                         @"Error: $(e.message)\n";
-        prensent_dialog (message);
+          @"Error: $(e.message)\n";
+        LO.present_dialog (message);
         stderr.printf (message);
         GLib.Process.exit (36);
       }

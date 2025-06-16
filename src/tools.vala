@@ -80,7 +80,7 @@ namespace LO {
 #endif
 
   // Easier presentation of dialog...
-  void prensent_dialog (string? format, ...) {
+  void present_dialog (string? format, ...) {
     bool use_fake_main_loop = false;
     Gtk.Window? parent = null;
     if (!Gtk.is_initialized ()) {

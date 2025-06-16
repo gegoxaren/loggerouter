@@ -78,6 +78,7 @@ public class LO.Timer : Gtk.Window {
 
     close_button = new Gtk.Button.with_label ("Cancel");
     close_button.clicked.connect (() => {
+      _time = -1;
       return_to_caller (ExitCode.CANCEL);
     });
     button_box.append (close_button);
@@ -123,6 +124,9 @@ public class LO.Timer : Gtk.Window {
   }
 
   private bool label_update () {
+    if (_time <= -1) {
+      return false;
+    }
     if (_time == 0) {
       return_to_caller (ExitCode.OK);
       return false;

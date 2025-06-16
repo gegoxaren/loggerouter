@@ -28,7 +28,7 @@ public struct LO.Settings {
   
   //TODO: Timer countdown setting.
 
-  string to_string () {
+  public string to_string () {
     var builder = new StringBuilder ();
     builder.append_printf ("key_file: %px\n", key_file);
     builder.append_printf ("config_path: %s", config_path);
@@ -45,14 +45,12 @@ public struct LO.Settings {
   private Settings () {}
 
   public void load_settings (string config_path) {
-    print ("path\n");
     key_file = new GLib.KeyFile ();
     this.config_path = config_path;
     parse_key_file ();
   }
 
   public void load_setting_from_xdg () {
-    print ("xdg\n");
     key_file = new GLib.KeyFile ();
     this.config_path = LO_XDG_CONFIG_PATH;
     if (GLib.File.new_for_path (this.config_path).query_exists ()) {
@@ -65,7 +63,6 @@ public struct LO.Settings {
 
   private void parse_key_file ()
   requires (key_file != null) {
-    print ("Hello!\n");
     try {
       key_file.load_from_file (this.config_path, GLib.KeyFileFlags.NONE);
     } catch (GLib.FileError e) {

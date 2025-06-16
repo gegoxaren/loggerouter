@@ -38,9 +38,9 @@ public class LO.ActionButton : Gtk.Button {
                                 null, out pid);
       
     } catch (GLib.SpawnError e) {
-      prensent_dialog ("ERROR: %s\n", e.message);
+      LO.present_dialog ("ERROR: %s\n", e.message);
     } catch (GLib.ShellError e) {
-      prensent_dialog ("ERROR: %s\n", e.message);
+      LO.present_dialog ("ERROR: %s\n", e.message);
     }
     app.try_quit ();
   }

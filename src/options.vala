@@ -33,4 +33,21 @@ public struct LO.Options{
 
   private  Options () {
   }
+
+  public string to_string () {
+    var outstr = new StringBuilder ();
+    outstr.append ("exec_name:");
+    outstr.append (exec_name);
+    outstr.append ("\nversion:");
+    outstr.append (version.to_string ());
+    outstr.append ("\nconfig_path:");
+    outstr.append (config_path);
+    outstr.append ("\nconfig_help:");
+    outstr.append (config_help.to_string ());
+    outstr.append ("\nactions_path:");
+    outstr.append (actions_path);
+    outstr.append ("\n");
+
+    return outstr.str;
+  }
 }
