@@ -13,3 +13,6 @@ https://code.launchpad.net/loggerouter
 
 Github code repo:
 https://github.com/gegoxaren/loggerouter
+
+private repo:
+https://gegoxaren.bato24.eu/bzr/loggerouter/trunk/files
