@@ -1,6 +1,8 @@
 project('loggerouter', 'c','vala',
   version : '0.1',
-  default_options : ['c_std=c17','warning_level=3'])
+  default_options : ['c_std=c17',
+    'warning_level=3',
+    'bindir=$HOME/.local/bin/', 'datadir=$HOME/.config/loggerouter/'])
 
 glib_dep = dependency ('glib-2.0', required: true)
 gtk_dep = dependency ('gtk4', required: true)

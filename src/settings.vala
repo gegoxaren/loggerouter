@@ -17,36 +17,45 @@
 
 public struct LO.Settings {
 
-  const string CONFIG_INI_NAMESPACE_MAIN = "Main";
+  public const int64 DEFAULT_TIMEOUT = 15;
+
+  private const string CONFIG_INI_NAMESPACE_MAIN = "Main";
 
   string? config_path;
   GLib.KeyFile? key_file;
 
-  private static GLib.Once<LO.Settings?> instance;
 
   public bool? dark_theme;
+  public int64 timeout_time;
   
   //TODO: Timer countdown setting.
 
   public string to_string () {
     var builder = new StringBuilder ();
-    builder.append_printf ("key_file: %px\n", key_file);
-    builder.append_printf ("config_path: %s", config_path);
-    builder.append_printf ("dark_theme: %s", dark_theme.to_string ());
+    builder.append_printf ("key_file: (%px)\n", key_file);
+    builder.append_printf ("\tconfig_path: %s\n", config_path);
+    builder.append_printf ("\tdark_theme: %s\n", dark_theme.to_string ());
+    builder.append_printf ("\ttimeout_time: %s\n",  timeout_time.to_string ());
     return builder.str;
   }
 
-  public static unowned LO.Settings? get_instance () {
-    return instance.once (() => {
-      return LO.Settings ();
-    });
+  //private static GLib.Once<LO.Settings?> instance;
+  //public static unowned LO.Settings? get_instance () {
+  //  unowned var ret_val = instance.once (() => {
+  //    return LO.Settings ();
+  //  });
+ 
+  //  return ret_val;
+  //}
+
+  public Settings () {
+    this.timeout_time = -1;
+    this.dark_theme = null;
   }
 
-  private Settings () {}
-
   public void load_settings (string config_path) {
-    key_file = new GLib.KeyFile ();
     this.config_path = config_path;
+    key_file = new GLib.KeyFile ();
     parse_key_file ();
   }
 
@@ -56,10 +65,11 @@ public struct LO.Settings {
     if (GLib.File.new_for_path (this.config_path).query_exists ()) {
       parse_key_file ();
     } else {
-      stderr.printf ("Colud not find file: %s", this.config_path);
+      stderr.printf ("Could not find file: %s", this.config_path);
       this.dark_theme = false;
     }
   }
+
 
   private void parse_key_file ()
   requires (key_file != null) {
@@ -86,5 +96,19 @@ public struct LO.Settings {
       stderr.printf (message);
       GLib.Process.exit (43);
     }
+
+    try {
+        if (key_file.has_key (CONFIG_INI_NAMESPACE_MAIN, "Timeout")) {
+            this.timeout_time = key_file.get_int64 (CONFIG_INI_NAMESPACE_MAIN,
+                                                     "Timeout");
+        } else {
+            this.timeout_time = DEFAULT_TIMEOUT;
+        }
+    } catch (GLib.KeyFileError e) {
+      string message = @"ERROR: $(e.message)\n";
+      stderr.printf (message);
+      GLib.Process.exit (44);
+    }
+    assert (this.timeout_time != -1);
   }
 }

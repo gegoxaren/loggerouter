@@ -16,11 +16,13 @@
  */
 
 public struct LO.ActionEntry {
-  string group; /*< The "[Group]" heading*/
-  string? text; /*< the "Text=foo bar" key*/
-  string exec; /*< the "Exec=baz buz" key*/
-  string? icon; /*< icon name or path. "Icon="*/
-  bool icon_is_path; /*< wether or not "icon" is a path or an icon name. */
+  public string group; /*< The "[Group]" heading*/
+  public string? text; /*< the "Text=foo bar" key*/
+  public string exec; /*< the "Exec=baz buz" key*/
+  public string? icon; /*< icon name or path. "Icon="*/
+  public bool icon_is_path; /*< wether or not "icon" is a path or an icon name. */
+  public int64 timeout_time; /*< The timeout of this action.*/
+
 
   public string to_string () {
     string outstr = @"[$(group)]\nText=";
@@ -34,18 +36,19 @@ public struct LO.ActionEntry {
       outstr += "Icon=\n";
     }
     outstr += @"# Icon is path: $(icon_is_path)\n";
+    outstr += @"Timeout=$(timeout_time)";
     return outstr;
   }
 }
 
-public struct LO.Action {
+public struct LO.Actions {
   Gee.ArrayList<LO.ActionEntry?> entries;
   KeyFile? actions_key_file;
   string? actions_file;
 
 
   // Standard way of loadin settings file
-  public Action.from_xdg () {
+  public Actions.from_xdg () {
     actions_key_file = new KeyFile ();
     // TODO: Fail gracefully if file does not exist.
     try {
@@ -63,18 +66,18 @@ public struct LO.Action {
                        @"Error: $(e.message)\n";
       GLib.stderr.printf (message);
       LO.present_dialog (message);
-      GLib.Process.exit (34);
+      GLib.Process.exit (24);
     }
 
     parse_keyfile ();
   }
 
   // For use with --config_file
-  public Action.from_file (string actions_path) {
+  public Actions.from_file (string actions_path) {
     //absolute path:
     actions_key_file = new KeyFile ();
 
-    this.actions_file = LO.resolve_path (actions_path);
+    this.actions_file = actions_path;
 
     try {
       actions_key_file.load_from_file (actions_file, GLib.KeyFileFlags.NONE);
@@ -90,7 +93,7 @@ public struct LO.Action {
         @"$(e.message)\n";
       GLib.stderr.printf (message);
       LO.present_dialog (message);
-      GLib.Process.exit (38);
+      GLib.Process.exit (28);
     }
 
     parse_keyfile ();
@@ -110,6 +113,7 @@ public struct LO.Action {
       * Text=Logout session
       * Exec=swaymsg exit
       */
+    //var _settings = Settings.get_instance ();
     string[] group_list = actions_key_file.get_groups ();
 
     if (group_list.length < 1) { // No groups
@@ -117,7 +121,7 @@ public struct LO.Action {
                         "Please add actions to the keyfile (ini-file).\n";
       GLib.stderr.printf (message);
       LO.present_dialog (message);
-      GLib.Process.exit (35);
+      GLib.Process.exit (25);
     }
 
     entries = new Gee.ArrayList<LO.ActionEntry?> ();
@@ -125,6 +129,8 @@ public struct LO.Action {
     foreach (string _group in group_list) {
       string? _text = null;
       string? _icon = null;
+      int64 _timeout_time = -2;
+      // FIXME: This is cursed. Each Key should have it's own try/catch block.
       try {
         if (actions_key_file.has_key (_group, "Text")) {
           _text = actions_key_file.get_string (_group, "Text");
@@ -139,12 +145,18 @@ public struct LO.Action {
             _icon_is_path = true;
           }
         }
+        if (actions_key_file.has_key (_group, "Timeout")) {
+            _timeout_time =  actions_key_file.get_int64 (_group, "Timeout");
+        } else {
+          _timeout_time =  settings.timeout_time;
+        }
         var entry = LO.ActionEntry () {
           group = _group,
           text = _text,
           exec = _exec,
           icon = _icon,
-          icon_is_path = _icon_is_path
+          icon_is_path = _icon_is_path,
+          timeout_time = _timeout_time,
         };
         entries.add (entry);
       } catch (GLib.KeyFileError e) {
@@ -152,7 +164,7 @@ public struct LO.Action {
           @"Error: $(e.message)\n";
         LO.present_dialog (message);
         stderr.printf (message);
-        GLib.Process.exit (36);
+        GLib.Process.exit (26);
       }
     }
   }

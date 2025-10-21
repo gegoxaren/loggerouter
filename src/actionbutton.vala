@@ -24,6 +24,8 @@ public class LO.ActionButton : Gtk.Button {
   string? exec_action;
 
   string _button_text;
+  
+  int64? _timeout_time;
 
   void run_action () {
 
@@ -46,12 +48,13 @@ public class LO.ActionButton : Gtk.Button {
   }
 
 
-  public ActionButton (ActionEntry action) {
+  construct {
+    this.focusable = true;
+
     this.box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0) {
       homogeneous = false,
     };
     
-    if (action.icon != null) {
       this.icon = new Gtk.Image () {
         vexpand = false,
         hexpand = false,
@@ -59,6 +62,12 @@ public class LO.ActionButton : Gtk.Button {
         width_request = 28,
         height_request = 28,
       };
+      box.append (icon);
+  }
+
+  public ActionButton (ref ActionEntry action) {
+
+    if (action.icon != null) {
       string _icon_name;
       if (!action.icon_is_path) {
         icon.icon_name = action.icon;
@@ -66,8 +75,16 @@ public class LO.ActionButton : Gtk.Button {
         _icon_name = strip_prelude_of_path (action.icon);
         this.icon.set_from_file (_icon_name);
       }
-      box.append (icon);
+    } else {
+        this.icon.visible = false;
     }
+
+    this._timeout_time = action.timeout_time;
+    if (this._timeout_time < 0) {
+      this._timeout_time = LO.Settings.DEFAULT_TIMEOUT;
+    }
+    stdout.printf ("TIMEOUT: %" + int64.FORMAT + "\n", (int64) this._timeout_time);
+    //stdout.printf (@"TIMEOUT: $(this._timeout_time)\n");
 
     if (action.text != null) {
       _button_text = action.text;
@@ -88,19 +105,15 @@ public class LO.ActionButton : Gtk.Button {
     this.set_child (this.box);
 
     this.clicked.connect (() => {
-      var timer = new LO.Timer (this._button_text, 15, (e) => {
+      var timer = new LO.Timer (this._button_text, this._timeout_time, (e) => {
         if (e == LO.Timer.ExitCode.OK) {
             this.run_action ();
         }
       });
       timer.set_transient_for (app.get_active_window ());
-      timer.show ();
+      timer.visible = true;
     });
 
-  }
-
-  construct {
-    this.focusable = true;
   }
 
 }

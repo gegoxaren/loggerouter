@@ -18,8 +18,7 @@
 
 public class LO.Application : Gtk.Application {
 
-  LO.Action actions;
-  LO.Settings settings = LO.Settings.get_instance ();
+  LO.Actions actions;
   public Gtk.Window? window;
   Gtk.ListBox? list_box;
 
@@ -87,6 +86,8 @@ public class LO.Application : Gtk.Application {
   }
 
   public override void activate () {
+    //var settings = Settings.get_instance ();
+    //var _opts = Options.get_instance ();
 
     window = new Gtk.ApplicationWindow (this) {
       title = "LoggerOuter",
@@ -101,17 +102,19 @@ public class LO.Application : Gtk.Application {
     this.add_action (_action);
     this.set_accels_for_action ("app.quit", {"Escape","q",null});
 
-    if (opts.actions_path != null) {
-      actions = LO.Action.from_file (opts.actions_path);
-    } else {
-      actions = LO.Action.from_xdg ();
-    }
-
     if (opts.config_path != null) {
       settings.load_settings (opts.config_path);
     } else {
       settings.load_setting_from_xdg ();
     }
+
+    if (opts.actions_path != null) {
+        stdout.printf (settings.to_string ());
+      actions = LO.Actions.from_file (opts.actions_path);
+    } else {
+      actions = LO.Actions.from_xdg ();
+    }
+
 
     list_box  = new Gtk.ListBox () {
       margin_top = 50,
@@ -134,13 +137,13 @@ public class LO.Application : Gtk.Application {
 
     bool dark_theme = settings.dark_theme;
     Gtk.Settings.get_default ().gtk_application_prefer_dark_theme = dark_theme;
-
   }
 
 
   void add_buttons (Gee.ArrayList<LO.ActionEntry?> list) {
     foreach (ActionEntry entry in list) {
-      var btn = new LO.ActionButton (entry);
+      stdout.printf ("%s\n\n", entry.to_string ());
+      var btn = new LO.ActionButton (ref entry);
       this.list_box.append (btn);
     }
   }

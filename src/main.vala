@@ -38,9 +38,11 @@ int main (string[] args) {
   LO_XDG_ACTIONS_PATH = LO_XDG_CONFIG_DIR + "/actions.ini";
   LO_XDG_CONFIG_PATH = LO_XDG_CONFIG_DIR + "/config.ini";
 
-  opts = LO.Options.get_instance (); // Prevents segfault
-  settings = LO.Settings.get_instance ();
+  //opts = LO.Options.get_instance (); // Prevents segfault
+  opts = LO.Options (); // Prevents segfault
   opts.exec_name = args[0];
+  //settings = LO.Settings.get_instance ();
+  settings = LO.Settings ();
   app = new  LO.Application ();
   Gtk.init ();
   return app.run (args);

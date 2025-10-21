@@ -25,9 +25,9 @@ public class LO.Timer : Gtk.Window {
   Gtk.Button ok_button;
   Gtk.Button close_button;
   
-  private int _time;
-  public int time {
-    construct set {
+  private int64 _time;
+  public int64 time {
+    set {
       this._time = value;
     }
     get {
@@ -95,7 +95,7 @@ public class LO.Timer : Gtk.Window {
     this.modal = true;
   }
 
-  public Timer (string text, int time, owned ReturnCallback callback) {
+  public Timer (string text, int64? time, owned ReturnCallback callback) {
     this.text = text;
     this.time = time;
     this.callback = (owned) callback;

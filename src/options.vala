@@ -23,15 +23,15 @@ public struct LO.Options{
   public bool config_help;
   public string actions_path;
 
-  private static GLib.Once<LO.Options?> instance;
+  //private static GLib.Once<LO.Options?> instance;
 
-  public static unowned LO.Options? get_instance () {
-    return instance.once (() => {
-        return LO.Options ();
-    });
-  }
+  //public static unowned LO.Options? get_instance () {
+  //  return instance.once (() => {
+  //      return LO.Options ();
+  //  });
+  //}
 
-  private  Options () {
+  public Options () {
   }
 
   public string to_string () {
