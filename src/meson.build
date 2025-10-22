@@ -3,7 +3,7 @@ source_files = files([
   'options.vala',
   'actionbutton.vala',
   'application.vala',
-  'action.vala',
+  'actions.vala',
   'tools.vala',
   'settings.vala',
   'timer.vala',
