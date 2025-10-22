@@ -8,8 +8,18 @@ Please see the provided configuration exampels
 (test_actions.ini and test_config.ini).
 
 
-Launchpad code repo:
-https://code.launchpad.net/loggerouter
+Building/Installation
+
+$ mkdir build && cd build
+$ meson setup --bindir=~/.local/bin/ .. 
+$ ninja
+$ ninja install
+$ # installing the configuration files
+$ mkdir -p ~/.config/loggerouter
+$ cp actions.ini ~/.config/loggerouter/
+$ cp config.ini ~/.config/loggerouter/
+
+
 
 Github code repo:
 https://github.com/gegoxaren/loggerouter
