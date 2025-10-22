@@ -83,8 +83,6 @@ public class LO.ActionButton : Gtk.Button {
     if (this._timeout_time < 0) {
       this._timeout_time = LO.Settings.DEFAULT_TIMEOUT;
     }
-    stdout.printf ("TIMEOUT: %" + int64.FORMAT + "\n", (int64) this._timeout_time);
-    //stdout.printf (@"TIMEOUT: $(this._timeout_time)\n");
 
     if (action.text != null) {
       _button_text = action.text;

@@ -109,7 +109,6 @@ public class LO.Application : Gtk.Application {
     }
 
     if (opts.actions_path != null) {
-        stdout.printf (settings.to_string ());
       actions = LO.Actions.from_file (opts.actions_path);
     } else {
       actions = LO.Actions.from_xdg ();
@@ -142,7 +141,6 @@ public class LO.Application : Gtk.Application {
 
   void add_buttons (Gee.ArrayList<LO.ActionEntry?> list) {
     foreach (ActionEntry entry in list) {
-      stdout.printf ("%s\n\n", entry.to_string ());
       var btn = new LO.ActionButton (ref entry);
       this.list_box.append (btn);
     }
